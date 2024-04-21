@@ -29,10 +29,7 @@ type Props = {
 
 type Row = { id: string; pinned: string; location: string };
 
-export const StickyHeadTable: React.FC<Props> = ({
-  rows,
-  handleSelectedRow,
-}) => {
+export const List: React.FC<Props> = ({ rows, handleSelectedRow }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
