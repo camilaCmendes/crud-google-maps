@@ -17,7 +17,7 @@ type Props = {
 };
 
 export const ThemeProvider: React.FC<Props> = ({ children }) => {
-  const [theme, setTheme] = useState("light"); // 'light' ou 'dark'
+  const [theme, setTheme] = useState("light");
   const muiTheme = theme === "light" ? lightTheme : darkTheme;
 
   const toggleTheme = () => {

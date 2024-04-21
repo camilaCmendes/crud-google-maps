@@ -10,24 +10,23 @@ import {
   TablePagination,
   TableRow,
 } from "@mui/material";
+import { LocationDTO } from "@/dto/locationDTO";
 
 type Column = {
-  id: "pinned" | "location";
+  id: keyof LocationDTO;
   label: string;
   minWidth?: number;
 };
 
 const columns: Column[] = [
-  { id: "pinned", label: "Pinned", minWidth: 100 },
+  { id: "pin", label: "Pinned", minWidth: 100 },
   { id: "location", label: "Location", minWidth: 150 },
 ];
 
 type Props = {
-  rows: Row[];
-  handleSelectedRow: (selectedRow: Row) => void;
+  rows: LocationDTO[];
+  handleSelectedRow: (selectedRow: LocationDTO) => void;
 };
-
-type Row = { id: string; pinned: string; location: string };
 
 export const List: React.FC<Props> = ({ rows, handleSelectedRow }) => {
   const [page, setPage] = useState(0);
@@ -45,52 +44,58 @@ export const List: React.FC<Props> = ({ rows, handleSelectedRow }) => {
   };
 
   return (
-    <Paper sx={{ width: "100%", overflow: "hidden" }}>
-      <TableContainer sx={{ maxHeight: 880 }}>
-        <Table stickyHeader aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              {columns.map((column) => (
-                <TableCell
-                  key={column.id}
-                  align="left"
-                  style={{ minWidth: column.minWidth }}
-                >
-                  {column.label}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row) => (
-                <TableRow
-                  hover
-                  role="checkbox"
-                  tabIndex={-1}
-                  key={row.id}
-                  onClick={() => handleSelectedRow(row)}
-                >
+    <>
+      {rows.length === 0 ? (
+        <></>
+      ) : (
+        <Paper sx={{ width: "100%", overflow: "hidden" }}>
+          <TableContainer sx={{ maxHeight: 880 }}>
+            <Table stickyHeader aria-label="simple table">
+              <TableHead>
+                <TableRow>
                   {columns.map((column) => (
-                    <TableCell key={column.id} align="left">
-                      {row[column.id]}
+                    <TableCell
+                      key={column.id}
+                      align="left"
+                      style={{ minWidth: column.minWidth }}
+                    >
+                      {column.label}
                     </TableCell>
                   ))}
                 </TableRow>
-              ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
-        component="div"
-        count={rows.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
-    </Paper>
+              </TableHead>
+              <TableBody>
+                {rows
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row) => (
+                    <TableRow
+                      hover
+                      role="checkbox"
+                      tabIndex={-1}
+                      key={row.pin}
+                      onClick={() => handleSelectedRow(row)}
+                    >
+                      {columns.map((column) => (
+                        <TableCell key={column.id} align="left">
+                          {row[column.id]}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25]}
+            component="div"
+            count={rows.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        </Paper>
+      )}
+    </>
   );
 };
