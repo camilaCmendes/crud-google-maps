@@ -1,4 +1,4 @@
-import { FormControlLabel, FormGroup, SwitchProps } from "@mui/material";
+import { SwitchProps } from "@mui/material";
 import * as S from "./styles";
 
 type Props = SwitchProps & {};
