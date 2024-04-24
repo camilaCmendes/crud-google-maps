@@ -60,6 +60,7 @@ export const Modal: React.FC<Props> = ({
     if (!newPin) {
       handleRemovePin({ location: location ?? "", pin: pin ?? "" });
     }
+    handleClose();
   };
 
   return (

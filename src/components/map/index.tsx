@@ -29,11 +29,10 @@ const GoogleMapsSearch: React.FC<Props> = ({ handleAddToLocationList }) => {
   const searchBox = useRef<HTMLInputElement>(null);
 
   const [map, setMap] = useState<google.maps.Map | null>(null);
+  const [isSearchValid, setIsSearchValid] = useState(false);
 
   const [lastSearchResult, setLastSearchResult] =
     useState<google.maps.places.PlaceResult | null>(null);
-
-  const [markers, setMarkers] = useState([]);
 
   const onLoad = useCallback((map: google.maps.Map) => {
     const bounds = new window.google.maps.LatLngBounds(center);
@@ -44,20 +43,6 @@ const GoogleMapsSearch: React.FC<Props> = ({ handleAddToLocationList }) => {
   const onUnmount = useCallback(() => {
     setMap(null);
   }, []);
-
-  const addMarker = useCallback(
-    (location) => {
-      if (!map) return;
-      const marker = new google.maps.Marker({
-        position: location,
-        map: map,
-        title: location.address,
-      });
-
-      setMarkers((prevMarkers) => [...prevMarkers, marker]);
-    },
-    [map]
-  );
 
   const onPlacesChanged = useCallback(() => {
     const places = searchBox.current?.value;
@@ -74,35 +59,24 @@ const GoogleMapsSearch: React.FC<Props> = ({ handleAddToLocationList }) => {
         console.log("Search result:", firstResult);
         map.fitBounds(firstResult.geometry.viewport);
         map.setCenter(firstResult.geometry.location);
-        addMarker(firstResult.geometry.location);
         setLastSearchResult(firstResult);
+        setIsSearchValid(true);
       } else {
         console.log("No results found or error occurred.");
+        setIsSearchValid(false);
       }
     });
-  }, [map, addMarker]);
+  }, [map]);
 
   const handleAddToList = useCallback(() => {
-    onPlacesChanged();
     console.log(lastSearchResult);
-    if (lastSearchResult) {
+    if (lastSearchResult && isSearchValid) {
       console.log("Add to list:", lastSearchResult.formatted_address);
       handleAddToLocationList(lastSearchResult.formatted_address ?? "");
     } else {
       console.log("No location selected");
     }
-  }, [lastSearchResult]);
-
-  const clearMarkers = () => {
-    markers.forEach((marker) => marker.setMap(null));
-    setMarkers([]);
-  };
-
-  useEffect(() => {
-    return () => {
-      clearMarkers();
-    };
-  }, [onPlacesChanged]);
+  }, [lastSearchResult, isSearchValid]);
 
   return isLoaded ? (
     <>
@@ -131,7 +105,9 @@ const GoogleMapsSearch: React.FC<Props> = ({ handleAddToLocationList }) => {
           />
         </Grid>
         <Grid item>
-          <Button onClick={handleAddToList}>Add to list</Button>
+          <Button onClick={handleAddToList} disabled={!isSearchValid}>
+            Add to list
+          </Button>
         </Grid>
       </Grid>
       <GoogleMap

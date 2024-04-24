@@ -1,8 +1,6 @@
 "use client";
-import { Button, List, Modal, SnackBar } from "@/components";
+import { List, Modal, SnackBar } from "@/components";
 import GoogleMapsSearch from "@/components/map";
-import { useEffect, useRef, useState } from "react";
-import * as S from "./styles";
 import { LocationDTO } from "@/dto/locationDTO";
 import {
   AddLocationToLocationsList,
@@ -10,17 +8,15 @@ import {
   UpdateLocationsList,
   getLocationsList,
 } from "@/storages/storageLocationsList";
-import { Grid } from "@mui/material";
+import { useEffect, useRef, useState } from "react";
+import * as S from "./styles";
+import { useToast } from "@/hooks/useToast";
 
 export default function Home() {
+  const { showToast } = useToast();
   const [open, setOpen] = useState(false);
   const modalInfo = useRef({ pin: "", location: "", newPin: false });
   const [list, setList] = useState<LocationDTO[]>([] as LocationDTO[]);
-  const [openSnackbar, setOpenSnackbar] = useState({
-    open: false,
-    message: "",
-    variant: "info",
-  });
 
   const handleSavePin = (newPinData: LocationDTO) => {
     if (modalInfo.current.newPin) {
@@ -28,11 +24,7 @@ export default function Home() {
       if (response) {
         updateList();
       } else {
-        setOpenSnackbar({
-          open: true,
-          message: "Something went wrong",
-          variant: "error",
-        });
+        showToast("Something went wrong", "error");
       }
     } else {
       const response = UpdateLocationsList(
@@ -45,11 +37,7 @@ export default function Home() {
       if (response) {
         updateList();
       } else {
-        setOpenSnackbar({
-          open: true,
-          message: "Something went wrong",
-          variant: "error",
-        });
+        showToast("Something went wrong", "error");
       }
     }
     handleCloseModal();
@@ -73,7 +61,11 @@ export default function Home() {
   };
 
   const handleCloseModal = () => {
-    modalInfo.current = { pin: "", location: "", newPin: false };
+    modalInfo.current = {
+      pin: "",
+      location: "",
+      newPin: modalInfo.current.newPin,
+    };
     setOpen(false);
   };
 
@@ -83,11 +75,7 @@ export default function Home() {
     if (response) {
       updateList();
     } else {
-      setOpenSnackbar({
-        open: true,
-        message: "Something went wrong",
-        variant: "error",
-      });
+      showToast("Something went wrong", "error");
     }
     handleCloseModal();
   };
@@ -97,31 +85,14 @@ export default function Home() {
   };
 
   const updateList = () => {
-    setOpenSnackbar({
-      open: true,
-      message: "List Updated",
-      variant: "success",
-    });
+    showToast("List Updated", "success");
     const updatedList = getLocationsList();
     setList(updatedList);
   };
 
-  const handleCloseSnackbar = (
-    event?: React.SyntheticEvent | Event,
-    reason?: string
-  ) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setOpenSnackbar({
-      open: false,
-      message: "",
-      variant: openSnackbar.variant,
-    });
-  };
-
   useEffect(() => {
-    updateList();
+    const savedList = getLocationsList();
+    setList(savedList);
   }, []);
 
   return (
@@ -135,12 +106,6 @@ export default function Home() {
         handleSave={handleSavePin}
         handleClose={handleCloseModal}
         handleRemovePin={handleRemovePin}
-      />
-      <SnackBar
-        handleClose={handleCloseSnackbar}
-        message={openSnackbar.message}
-        open={openSnackbar.open}
-        variant={openSnackbar.variant}
       />
     </S.Container>
   );
