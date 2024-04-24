@@ -52,7 +52,7 @@ const GoogleMapsSearch: React.FC<Props> = ({ handleAddToLocationList }) => {
     service.textSearch({ query: places }, (results, status) => {
       if (
         status === google.maps.places.PlacesServiceStatus.OK &&
-        (results?.length ?? 0) > 0
+        results.length > 0
       ) {
         const firstResult = results[0];
         map.fitBounds(firstResult.geometry.viewport);
