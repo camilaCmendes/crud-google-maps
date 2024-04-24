@@ -22,7 +22,7 @@ type Props = {
 const GoogleMapsSearch: React.FC<Props> = ({ handleAddToLocationList }) => {
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
-    googleMapsApiKey: "AIzaSyAqVDRh43Ky7gyX48LVnJQDTMr_wbz6mNA",
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY as string,
     libraries: ["places"],
   });
 
