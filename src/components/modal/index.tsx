@@ -56,7 +56,6 @@ export const Modal: React.FC<Props> = ({
   }, [location, reset]);
 
   const handleRemove = () => {
-    console.log({ newPin });
     if (!newPin) {
       handleRemovePin({ location: location ?? "", pin: pin ?? "" });
     }

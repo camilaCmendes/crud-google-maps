@@ -11,7 +11,6 @@ export const getLocationsList = (): LocationDTO[] => {
 
 export const AddLocationToLocationsList = (item: LocationDTO) => {
   if (verifyPinInUse(item)) {
-    console.log("pin name already exists");
     return false;
   }
   const list = getLocationsList();
@@ -22,7 +21,6 @@ export const AddLocationToLocationsList = (item: LocationDTO) => {
 
 export const RemoveLocationFromLocationsList = (item: LocationDTO) => {
   if (!verifyPinInUse(item)) {
-    console.log("pin does not exist");
     return false;
   }
   const list = getLocationsList();
@@ -40,7 +38,6 @@ export const UpdateLocationsList = (
   newLocation: LocationDTO
 ) => {
   if (verifyPinInUse(newLocation)) {
-    console.log("pin already exist");
     return false;
   }
   const list = getLocationsList();

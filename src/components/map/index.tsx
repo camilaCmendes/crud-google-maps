@@ -50,31 +50,25 @@ const GoogleMapsSearch: React.FC<Props> = ({ handleAddToLocationList }) => {
 
     const service = new google.maps.places.PlacesService(map);
     service.textSearch({ query: places }, (results, status) => {
-      console.log("Search status:", status);
       if (
         status === google.maps.places.PlacesServiceStatus.OK &&
         results.length > 0
       ) {
         const firstResult = results[0];
-        console.log("Search result:", firstResult);
         map.fitBounds(firstResult.geometry.viewport);
         map.setCenter(firstResult.geometry.location);
         setLastSearchResult(firstResult);
         setIsSearchValid(true);
       } else {
-        console.log("No results found or error occurred.");
         setIsSearchValid(false);
       }
     });
   }, [map]);
 
   const handleAddToList = useCallback(() => {
-    console.log(lastSearchResult);
     if (lastSearchResult && isSearchValid) {
-      console.log("Add to list:", lastSearchResult.formatted_address);
       handleAddToLocationList(lastSearchResult.formatted_address ?? "");
     } else {
-      console.log("No location selected");
     }
   }, [lastSearchResult, isSearchValid]);
 
